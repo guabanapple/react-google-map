@@ -1,0 +1,20 @@
+@import url('../App.css');
+
+ul > li {
+  margin: 16px 0 0 0;
+  display: flex;
+}
+
+ul > li label {
+  display: flex;
+  width: 70%;
+  margin-left: 24px;
+}
+
+ul > li input {
+  margin-left: auto;
+}
+
+ul > li button {
+  margin: 0 16px;
+}
