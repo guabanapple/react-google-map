@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useMapsLibrary, useMap } from '@vis.gl/react-google-maps';
+// eslint-disable-next-line import/no-cycle
+import { userInputContext } from '../App';
 import './Directions.css';
 
-export default function Directions() {
-  const origin: string = '大阪駅';
-  const destination: string = '近鉄奈良駅';
-  const transitPoints = [
-    { location: 'あべのハルカス', stopover: true },
-    { location: '東大寺', stopover: true },
-    { location: 'JR神戸駅', stopover: true },
-  ];
+interface Type {
+  pushWaypointOrder: (order: number[]) => void;
+}
+
+export default function Directions({ pushWaypointOrder }: Type) {
+  const points = useContext(userInputContext);
+
+  const origin: string = points[0].name;
+  const destination: string = points[points.length - 1].name;
+  const waypoints: google.maps.DirectionsWaypoint[] = points
+    .filter((point) => point.type === 'waypoint' && point.name !== '')
+    .map((point) => ({ location: point.name, stopover: true }));
+
   const travelMode = google.maps.TravelMode.DRIVING;
 
   const map = useMap();
@@ -33,7 +40,7 @@ export default function Directions() {
         origin,
         destination,
         travelMode,
-        waypoints: transitPoints,
+        waypoints,
         optimizeWaypoints: true,
       })
       .then((res) => {
@@ -42,11 +49,13 @@ export default function Directions() {
       });
   }, [directionsService, directionsRenderer]);
 
-  const orderNames: string[] = routes[0]?.waypoint_order?.map((name) => transitPoints[name].location);
+  const waypointOrder: number[] = routes[0]?.waypoint_order;
+  pushWaypointOrder(waypointOrder);
+
   return (
     <div className="directions">
       <h3>{origin}</h3>
-      <p>{orderNames}</p>
+      <p>{waypointOrder}</p>
       <h3>{destination}</h3>
     </div>
   );

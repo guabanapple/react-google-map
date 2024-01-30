@@ -1,29 +1,30 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useCallback } from 'react';
 import { nanoid } from 'nanoid';
 import './App.css';
 import Form from './components/Form';
+// eslint-disable-next-line import/no-cycle
 import GoogleMapRoute from './components/Map';
 
 type PointType = 'origin' | 'waypoint' | 'destination';
+interface State {
+  id: string;
+  name: string;
+  type: PointType;
+}
+
+const initialState: State[] = [
+  { id: nanoid(), name: '', type: 'origin' },
+  { id: nanoid(), name: '', type: 'waypoint' },
+  { id: nanoid(), name: '', type: 'destination' },
+];
+
+export const userInputContext = createContext<State[]>(initialState);
 
 function App() {
-  interface State {
-    id: string;
-    name: string;
-    type: PointType;
-  }
-  const orderList: string[] = ['origin', 'waypoint', 'destination'];
-  const waypointsOrder: number[] = [];
+  let waypointOrder: number[] = [];
 
-  const fields = [{ type: 'origin' }, { type: 'waypoint' }, { type: 'destination' }];
-
-  const initialState: State[] = [
-    { id: nanoid(), name: '', type: 'origin' },
-    { id: nanoid(), name: '', type: 'waypoint' },
-    { id: nanoid(), name: '', type: 'destination' },
-  ];
   const [points, setPoints] = useState(initialState);
-  // const userInputContext = createContext<State[]>(initialState);
+  const [showMap, setShowMap] = useState(false);
 
   const handleFormAddClick = (id: string, name: string, inputType: PointType) => {
     let newPoints: State[] = [];
@@ -46,8 +47,14 @@ function App() {
     setPoints((prevPoints) => prevPoints.filter((prevPoint) => prevPoint.id !== id));
   };
 
-  const handleSearchButtonClick = (): void => {
-    console.log('search');
+  const handleSearchRoute = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    setShowMap(true);
+  };
+
+  const fetchWaypointOrder = (order: number[]) => {
+    waypointOrder = order;
+    console.log(`order: ${waypointOrder}`);
   };
 
   const pointsList = points.map((point: State) => (
@@ -61,16 +68,21 @@ function App() {
       onDeleteClick={handleFormDeleteClick}
     />
   ));
-  console.log(points);
 
   return (
     <div className="container">
       <h2>Best Route by GoogleMap</h2>
       <ul>{pointsList}</ul>
-      <button type="button" onClick={handleSearchButtonClick}>
-        検索
-      </button>
-      {/* <GoogleMapRoute /> */}
+      <form method="post" onSubmit={handleSearchRoute}>
+        <button type="submit" className="searchButton">
+          検索
+        </button>
+      </form>
+      {showMap && (
+        <userInputContext.Provider value={points}>
+          <GoogleMapRoute pushWaypointOrder={fetchWaypointOrder} />
+        </userInputContext.Provider>
+      )}
     </div>
   );
 }

@@ -7,7 +7,7 @@ ul > li {
 
 ul > li label {
   display: flex;
-  width: 70%;
+  width: 60%;
   margin-left: 24px;
 }
 
@@ -16,5 +16,5 @@ ul > li input {
 }
 
 ul > li button {
-  margin: 0 16px;
+  margin: 0 8px;
 }
