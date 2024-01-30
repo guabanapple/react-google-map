@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Form.css';
 
-type PointType = 'start' | 'goal' | 'waypoint';
+type PointType = 'origin' | 'waypoint' | 'destination';
 
 interface Props {
   id: string;

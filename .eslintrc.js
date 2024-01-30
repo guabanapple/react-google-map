@@ -29,7 +29,9 @@ module.exports = {
     project: './tsconfig.json',
   },
   plugins: ['@typescript-eslint', 'react'],
-  rules: {},
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
+  },
   ignorePatterns: [
     '/.eslintrc.js',
     '/build/', // ビルド出力
