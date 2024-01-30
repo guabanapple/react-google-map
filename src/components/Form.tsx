@@ -5,14 +5,15 @@ type PointType = 'origin' | 'waypoint' | 'destination';
 
 interface Props {
   id: string;
+  name: string;
   type: PointType;
-  onAddClick: (name: string, type: PointType) => void;
+  onAddClick: (id: string, name: string, type: PointType) => void;
   onEditClick: (id: string, name: string) => void;
   onDeleteClick: (id: string) => void;
 }
 
-export default function Form({ id, type, onAddClick, onEditClick, onDeleteClick }: Props) {
-  const [inputText, setInputText] = useState('');
+export default function Form({ id, name, type, onAddClick, onEditClick, onDeleteClick }: Props) {
+  const [inputText, setInputText] = useState(name);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleChangeInputText = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +34,7 @@ export default function Form({ id, type, onAddClick, onEditClick, onDeleteClick 
       alert('入力値が無効です。');
       return;
     }
-    onAddClick(inputText, type);
+    onAddClick(id, inputText, type);
     setIsSaved(true);
   };
 

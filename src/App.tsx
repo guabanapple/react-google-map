@@ -25,18 +25,13 @@ function App() {
   const [points, setPoints] = useState(initialState);
   // const userInputContext = createContext<State[]>(initialState);
 
-  const handleFormAddClick = (name: string, inputType: PointType) => {
+  const handleFormAddClick = (id: string, name: string, inputType: PointType) => {
     let newPoints: State[] = [];
     setPoints((prevPoints) => {
+      newPoints = prevPoints.map((prevPoint) => (prevPoint.id === id ? { ...prevPoint, name } : prevPoint));
       if (inputType === 'waypoint') {
-        newPoints = [...prevPoints];
-        newPoints.push({ id: nanoid(), name, type: 'waypoint' });
-      } else {
-        newPoints = prevPoints.map((prevPoint) => (prevPoint.type === inputType ? { ...prevPoint, name } : prevPoint));
+        newPoints.splice(-1, 0, { id: nanoid(), name: '', type: 'waypoint' });
       }
-
-      // 並び替え: 'origin' => 'waypoint' => 'destination'
-      newPoints.sort((x, y) => orderList.indexOf(x.type) - orderList.indexOf(y.type));
       return newPoints;
     });
   };
@@ -59,13 +54,13 @@ function App() {
     <Form
       key={point.id}
       id={point.id}
+      name={point.name}
       type={point.type}
       onAddClick={handleFormAddClick}
       onEditClick={handleFormEditClick}
       onDeleteClick={handleFormDeleteClick}
     />
   ));
-
   console.log(points);
 
   return (
@@ -75,7 +70,7 @@ function App() {
       <button type="button" onClick={handleSearchButtonClick}>
         検索
       </button>
-      <GoogleMapRoute />
+      {/* <GoogleMapRoute /> */}
     </div>
   );
 }
