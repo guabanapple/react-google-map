@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { APIProvider, Map } from '@vis.gl/react-google-maps';
 // eslint-disable-next-line import/no-cycle
 import Directions from './Directions';
 
 interface Type {
-  pushWaypointOrder: ((order:number[]) => void)
+  pushWaypointOrder: (order: number[]) => void;
 }
 
 export default function GoogleMapRoute({ pushWaypointOrder }: Type) {

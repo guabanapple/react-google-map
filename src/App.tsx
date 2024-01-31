@@ -1,9 +1,10 @@
-import React, { useState, createContext, useCallback } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import './App.css';
 import Form from './components/Form';
 // eslint-disable-next-line import/no-cycle
-import GoogleMapRoute from './components/Map';
+import GoogleMapRoute from './components/GoogleMapRoute';
+import ResultView from './components/ResultView';
 
 type PointType = 'origin' | 'waypoint' | 'destination';
 interface State {
@@ -21,10 +22,9 @@ const initialState: State[] = [
 export const userInputContext = createContext<State[]>(initialState);
 
 function App() {
-  let waypointOrder: number[] = [];
-
-  const [points, setPoints] = useState(initialState);
-  const [showMap, setShowMap] = useState(false);
+  const [points, setPoints] = useState<State[]>(initialState);
+  const [countUp, setCountUp] = useState(0);
+  const [waypointOrder, setWaypointOrder] = useState<number[]>([]);
 
   const handleFormAddClick = (id: string, name: string, inputType: PointType) => {
     let newPoints: State[] = [];
@@ -49,12 +49,11 @@ function App() {
 
   const handleSearchRoute = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    setShowMap(true);
+    setCountUp((prevCount) => prevCount + 1);
   };
 
-  const fetchWaypointOrder = (order: number[]) => {
-    waypointOrder = order;
-    console.log(`order: ${waypointOrder}`);
+  const fetchWaypointOrder = (order: number[]): void => {
+    setWaypointOrder(order);
   };
 
   const pointsList = points.map((point: State) => (
@@ -78,10 +77,13 @@ function App() {
           検索
         </button>
       </form>
-      {showMap && (
-        <userInputContext.Provider value={points}>
-          <GoogleMapRoute pushWaypointOrder={fetchWaypointOrder} />
-        </userInputContext.Provider>
+      {countUp > 0 && (
+        <>
+          <userInputContext.Provider value={points}>
+            <GoogleMapRoute key={countUp} pushWaypointOrder={fetchWaypointOrder} />
+          </userInputContext.Provider>
+          <ResultView points={points} order={waypointOrder} />
+        </>
       )}
     </div>
   );

@@ -46,17 +46,13 @@ export default function Directions({ pushWaypointOrder }: Type) {
       .then((res) => {
         directionsRenderer.setDirections(res);
         setRoutes(res.routes);
+        pushWaypointOrder(res.routes[0]?.waypoint_order);
       });
   }, [directionsService, directionsRenderer]);
 
-  const waypointOrder: number[] = routes[0]?.waypoint_order;
-  pushWaypointOrder(waypointOrder);
-
   return (
-    <div className="directions">
-      <h3>{origin}</h3>
-      <p>{waypointOrder}</p>
-      <h3>{destination}</h3>
+    <div>
+      <p>aaa</p>
     </div>
   );
 }
